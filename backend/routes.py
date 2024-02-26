@@ -35,7 +35,8 @@ def count():
 ######################################################################
 @app.route("/picture", methods=["GET"])
 def get_pictures():
-    pass
+    
+    return jsonify(data)   
 
 ######################################################################
 # GET A PICTURE
@@ -44,7 +45,12 @@ def get_pictures():
 
 @app.route("/picture/<int:id>", methods=["GET"])
 def get_picture_by_id(id):
-    pass
+    for picture in data:
+        if picture["id"] == id:
+            return picture
+
+    return {"message" : "Picture not found"},404        
+            
 
 
 ######################################################################
@@ -52,7 +58,14 @@ def get_picture_by_id(id):
 ######################################################################
 @app.route("/picture", methods=["POST"])
 def create_picture():
-    pass
+    pic = request.json
+    for picture in data:
+        if(picture['id']== pic['id']):
+            return {"Message": "picture with id " + str(picture['id']) + " already present"},302
+
+    data.append(pic)
+    return pic,201
+
 
 ######################################################################
 # UPDATE A PICTURE
@@ -61,11 +74,25 @@ def create_picture():
 
 @app.route("/picture/<int:id>", methods=["PUT"])
 def update_picture(id):
-    pass
+
+    for index, picture in enumerate(data): 
+        if (picture['id']==id):
+            data[index] = request.json
+            return "Sucess", 200
+    return {"message": "picture not found"}, 404        
 
 ######################################################################
 # DELETE A PICTURE
 ######################################################################
 @app.route("/picture/<int:id>", methods=["DELETE"])
 def delete_picture(id):
-    pass
+    idx_to_delete = None
+    for idx, picture in enumerate(data):
+        if picture['id'] == id:
+            idx_to_delete = idx
+    if idx_to_delete is not None:
+        del data[idx_to_delete]
+        return {}, 204
+    return {"message":"picture not found"}, 404            
+    
+
